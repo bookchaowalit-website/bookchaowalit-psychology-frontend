@@ -18,3 +18,7 @@ Score: 7/10 (was 4/10) — browsing by theme and saving prompts now actually wor
 - Fixed: choosing a theme never changed the reading sheet and there was no way to open a specific concept; the index now lists the theme's concepts and selecting a theme opens its first one. "Turn the page" stays within the theme.
 - Fixed: saved prompts were lost on reload despite the product promise; they now persist via `lib/use-stored-state.ts` and are listed in a new "Your margin" section with remove buttons.
 - Buttons have explicit `type`, `aria-pressed`/`aria-current` state.
+
+## Done in this pass (pass 2)
+
+- Added config-driven canonical host (the app had no sitemap or robots at all): `lib/site.ts` resolves `NEXT_PUBLIC_SITE_URL` (validated; clear error on a non-http(s) value, default is the Vercel project URL) and feeds `metadataBase` plus generated `app/sitemap.ts` / `app/robots.ts` (`/api/` disallowed), matching the portfolio-wide pattern. Tested in `lib/site.test.ts`.

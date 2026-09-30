@@ -3,9 +3,27 @@
 Educational concept notes for learning and reflection. Not diagnosis,
 treatment, or crisis support.
 
+## Features
+
+- Browse concepts by theme; pick any concept from the index
+- Turn the page within the current theme
+- Save reflection prompts to "Your margin" (localStorage, validated on load)
+
+## Run
+
 ```bash
-npm install
+npm ci
 npm run dev
+```
+
+## Checks
+
+```bash
+npm ci
 npm run lint
+npm run typecheck
+npm test
 npm run build
 ```
+
+CI runs the same checks on every push (`.github/workflows/ci.yml`).

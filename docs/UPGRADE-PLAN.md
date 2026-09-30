@@ -22,3 +22,11 @@ Score: 7/10 (was 4/10) — browsing by theme and saving prompts now actually wor
 
 - Added config-driven canonical host (the app had no sitemap or robots at all): `lib/site.ts` resolves `NEXT_PUBLIC_SITE_URL` (validated; clear error on a non-http(s) value, default is the Vercel project URL) and feeds `metadataBase` plus generated `app/sitemap.ts` / `app/robots.ts` (`/api/` disallowed), matching the portfolio-wide pattern. Tested in `lib/site.test.ts`.
 - Private notes under each saved prompt (labelled textarea, capped at 1000 chars, blank clears it), stored separately in this browser and validated on load (`setNote` / `parseNotes` in `lib/concepts.ts`, tested).
+
+## Done in this pass (pass 3)
+- Edge-case pass on `lib/concepts.ts` (regression tests in `lib/concepts.test.ts`):
+  - `setNote` / `parseNotes` cut notes at `MAX_NOTE` with `slice`, leaving a
+    lone surrogate when an emoji straddled the limit. New `clipNote` drops the
+    whole emoji instead.
+  - Notes made only of zero-width characters / BOM were stored as real notes;
+    they now count as blank and clear the note.

@@ -46,3 +46,18 @@ describe("private notes", () => {
     expect(parseNotes("{bad")).toBeNull();
   });
 });
+
+describe("note edge cases", () => {
+  const id = concepts[0].id;
+  it("never cuts an emoji in half at the note limit", () => {
+    const text = `${"a".repeat(MAX_NOTE - 1)}😀tail`;
+    const note = setNote({}, id, text)[id];
+    expect(note).toBe("a".repeat(MAX_NOTE - 1));
+    expect(parseNotes(JSON.stringify({ [id]: text }))?.[id]).toBe("a".repeat(MAX_NOTE - 1));
+  });
+
+  it("treats a note of zero-width characters as blank", () => {
+    expect(setNote({ [id]: "old" }, id, "\u200B\uFEFF ")).toEqual({});
+    expect(parseNotes(JSON.stringify({ [id]: "\u200D" }))).toEqual({});
+  });
+});

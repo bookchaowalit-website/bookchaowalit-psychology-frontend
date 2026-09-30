@@ -39,11 +39,22 @@ export function parseSaved(raw: string | null, list: Concept[] = concepts): stri
 export const MAX_NOTE = 1000;
 export type Notes = Record<string, string>;
 
+/** Cut to MAX_NOTE UTF-16 units without leaving half of an emoji (lone surrogate) at the end. */
+export function clipNote(text: string): string {
+  if (text.length <= MAX_NOTE) return text;
+  return text.slice(0, /[\uD800-\uDBFF]/.test(text[MAX_NOTE - 1]) ? MAX_NOTE - 1 : MAX_NOTE);
+}
+
+/** Blank means whitespace plus zero-width characters / BOM only. */
+function isBlank(text: string): boolean {
+  return text.replace(/[\u200B-\u200D\u2060\uFEFF]/g, "").trim() === "";
+}
+
 /** Set (or clear, when blank) the private note for a concept. */
 export function setNote(notes: Notes, id: string, text: string): Notes {
   const next = { ...notes };
-  const value = text.slice(0, MAX_NOTE);
-  if (value.trim()) next[id] = value;
+  const value = clipNote(text);
+  if (!isBlank(value)) next[id] = value;
   else delete next[id];
   return next;
 }
@@ -57,7 +68,7 @@ export function parseNotes(raw: string | null, list: Concept[] = concepts): Note
     const known = new Set(list.map((concept) => concept.id));
     const notes: Notes = {};
     for (const [id, value] of Object.entries(data as Record<string, unknown>)) {
-      if (known.has(id) && typeof value === "string" && value.trim()) notes[id] = value.slice(0, MAX_NOTE);
+      if (known.has(id) && typeof value === "string" && !isBlank(value)) notes[id] = clipNote(value);
     }
     return notes;
   } catch {

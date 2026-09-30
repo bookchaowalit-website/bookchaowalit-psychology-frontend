@@ -7,7 +7,6 @@ Score: 7/10 (was 4/10) — browsing by theme and saving prompts now actually wor
 ## Backlog
 
 - P1: Add more concepts (currently 5) with a source/further-reading line each.
-- P1: Let the visitor write a private note under a saved prompt (local only).
 - P2: Crisis-support pointer in the footer (the product explicitly excludes crisis support; a link to local services is the honest complement).
 - P2: Playwright smoke test for theme → concept → save.
 
@@ -22,3 +21,4 @@ Score: 7/10 (was 4/10) — browsing by theme and saving prompts now actually wor
 ## Done in this pass (pass 2)
 
 - Added config-driven canonical host (the app had no sitemap or robots at all): `lib/site.ts` resolves `NEXT_PUBLIC_SITE_URL` (validated; clear error on a non-http(s) value, default is the Vercel project URL) and feeds `metadataBase` plus generated `app/sitemap.ts` / `app/robots.ts` (`/api/` disallowed), matching the portfolio-wide pattern. Tested in `lib/site.test.ts`.
+- Private notes under each saved prompt (labelled textarea, capped at 1000 chars, blank clears it), stored separately in this browser and validated on load (`setNote` / `parseNotes` in `lib/concepts.ts`, tested).

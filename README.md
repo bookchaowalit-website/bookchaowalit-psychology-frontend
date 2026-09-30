@@ -8,6 +8,7 @@ treatment, or crisis support.
 - Browse concepts by theme; pick any concept from the index
 - Turn the page within the current theme
 - Save reflection prompts to "Your margin" (localStorage, validated on load)
+- Write a private note under each saved prompt (localStorage, validated on load)
 
 ## Run
 

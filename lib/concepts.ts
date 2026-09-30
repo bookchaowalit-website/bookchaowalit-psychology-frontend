@@ -35,3 +35,32 @@ export function parseSaved(raw: string | null, list: Concept[] = concepts): stri
     return null;
   }
 }
+
+export const MAX_NOTE = 1000;
+export type Notes = Record<string, string>;
+
+/** Set (or clear, when blank) the private note for a concept. */
+export function setNote(notes: Notes, id: string, text: string): Notes {
+  const next = { ...notes };
+  const value = text.slice(0, MAX_NOTE);
+  if (value.trim()) next[id] = value;
+  else delete next[id];
+  return next;
+}
+
+/** Keeps only string notes for known concepts, capped at MAX_NOTE characters. */
+export function parseNotes(raw: string | null, list: Concept[] = concepts): Notes | null {
+  if (!raw) return null;
+  try {
+    const data: unknown = JSON.parse(raw);
+    if (typeof data !== "object" || data === null || Array.isArray(data)) return null;
+    const known = new Set(list.map((concept) => concept.id));
+    const notes: Notes = {};
+    for (const [id, value] of Object.entries(data as Record<string, unknown>)) {
+      if (known.has(id) && typeof value === "string" && value.trim()) notes[id] = value.slice(0, MAX_NOTE);
+    }
+    return notes;
+  } catch {
+    return null;
+  }
+}

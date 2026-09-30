@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { concepts, conceptsForTheme, nextConcept, parseSaved, THEMES, toggleSaved } from "./concepts";
+import { concepts, conceptsForTheme, MAX_NOTE, nextConcept, parseNotes, parseSaved, setNote, THEMES, toggleSaved } from "./concepts";
 
 describe("themes", () => {
   it("lists all plus each distinct theme once", () => {
@@ -26,5 +26,23 @@ describe("saved prompts", () => {
     expect(toggleSaved(["01", "02"], "01")).toEqual(["02"]);
     expect(parseSaved(JSON.stringify(["01", "01", "99", 3]))).toEqual(["01"]);
     expect(parseSaved("nope")).toBeNull();
+  });
+});
+
+describe("private notes", () => {
+  const id = concepts[0].id;
+
+  it("sets, caps and clears a note", () => {
+    const notes = setNote({}, id, "Noticed this on Monday");
+    expect(notes).toEqual({ [id]: "Noticed this on Monday" });
+    expect(setNote(notes, id, "x".repeat(MAX_NOTE + 50))[id]).toHaveLength(MAX_NOTE);
+    expect(setNote(notes, id, "   ")).toEqual({});
+  });
+
+  it("restores only valid notes for known concepts", () => {
+    const raw = JSON.stringify({ [id]: "keep", unknown: "drop", [concepts[1].id]: 42 });
+    expect(parseNotes(raw)).toEqual({ [id]: "keep" });
+    expect(parseNotes("[]")).toBeNull();
+    expect(parseNotes("{bad")).toBeNull();
   });
 });
